@@ -1,0 +1,166 @@
+<?
+$listNQ = $request->getAttribute("listNQ");
+$listdoituong = $request->getAttribute("listdoituong");
+$listloaituoi = $request->getAttribute("listloaituoi");
+$listHangSX = $request->getAttribute("listHangSX");
+?>  	
+	<div class="x_panel">
+	  <div class="x_title table-title">
+		<h2>Tiêm vaccine</h2>						
+		<div class="clearfix"></div>
+	  </div>
+	  <!-- Form tim kiem -->
+	  <form class="form-horizontal form-label-left">
+		<div class="x_content">
+			<div>
+				<div class="panel panel-default tablemodify" style="padding:0 10px 10px 10px;margin-bottom: 0;">
+					<div class="x_title" style="margin-left: -10px;">
+						<h4 style="margin-left: 10px;margin-bottom: 0px;">Tìm kiếm </h4>									
+						<div class="clearfix"></div>
+					</div>
+					<div class="row" >
+						<div class="item form-group">										
+							<label class="control-label col-md-2">Tên/điện thoại/năm sinh/địa chỉ</label>
+							<div class="col-md-3">
+								<input type="text" class="form-control" name="searchName" id="searchName" >
+							</div>
+							
+							<label class="control-label col-md-1 col-sm-1">Ngày tiêm</label>
+							<div class="col-md-2 col-sm-2 ">
+								<div class='input-group date' id='datetimepicker1'>
+								<input type='text' id="sngaytiem" class="typeDate form-control" placeholder="dd/mm/yyyy" />
+								<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+								</div>
+							</div>
+							
+							<div class="col-md-2">
+								<select id="selDuyet" class="select form-control">			
+									<option value="2">Chưa tiêm</option>
+									<option value="3">Đã tiêm</option>				
+								</select>
+							</div>
+							<div class="col-md-1" style="padding-top: 5px;">
+								<button type="button" class="btn btn-primary btn-sm" id="btnSearch">Tìm kiếm</button>
+							</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	  </form>		
+	<!-- Ket thuc Form tim kiem -->
+	  <div class="x_content">
+		<div style="display:none">
+			<select id="gioitinh" class="select form-control">			
+				<option value="Nam">Nam</option>
+				<option value="Nữ">Nữ</option>				
+			</select>
+			<select id="doituong" class="select form-control">
+				<option value="">--Chọn đối tượng--</option>
+<?			
+			if($listdoituong!=false){
+				foreach($listdoituong as $doituong){
+?>							
+				<option value="<?=$doituong->get("dtId")?>"><?=$doituong->get("tenDt")?></option>
+<?
+				}
+			}
+?>				
+			</select>
+			<select id="loaituoi" class="select form-control">
+				<option value="">--Chọn loại tuổi--</option>
+<?			
+			if($listloaituoi!=false){
+				foreach($listloaituoi as $loaituoi){
+?>							
+				<option value="<?=$loaituoi->get("ltId")?>"><?=$loaituoi->get("soTuoi")?></option>
+<?
+				}
+			}
+?>				
+			</select>
+		</div>
+		<form name="frmDuyet" id="frmDuyet" action="" method="post">
+			<input type="hidden" id="ngaytiemDuyet" name="ngaytiemDuyet" value="">
+			<input type="hidden" id="hangDuyet" name="hangDuyet" value="">
+			<input type="hidden" id="loDuyet" name="loDuyet" value="">
+			<input type="hidden" id="numberCheck" name="numberCheck" value="">
+			
+			<table id="datatable-nhapdanhsach" class="dataTable table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+			  <thead>
+				<tr>
+				  <th></th>
+				  <th>STT</th>
+				  <th>Lần tiêm</th>
+				  <th>Mũi tiêm</th>
+				  <th>Họ và Tên </th>
+				  <th>Năm sinh</th>
+				  <th>Giới tính</th>
+				  <th>CMND/CCCD/ID <br> Code</th>		
+				  <th>Điện thoại</th>
+				  <th>Địa chỉ</th>	
+				  <th>Đối tượng</th>	
+				  <th>Loại tuổi</th>	
+				  <th>Func</th>                          
+				</tr>
+			  </thead>
+			  <tbody>			
+			  </tbody>
+			</table>	
+		</form>
+	  </div>
+	</div>  
+
+<!--  Modal -->
+<div class="modal fade" id="modal-duyet" role="dialog">
+    <div class="modal-dialog">    
+      <!-- Modal content-->
+      <div class="modal-content">        
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4 class="modal-title">Tiêm chủng</h4>
+        </div>
+        <div class="modal-body"> 
+			<form id="frmDongYTiem" name="frmDongYTiem" action="" method="post" class="form-label-left">					
+				<div class="item form-group" style="padding-bottom: 20px;font-size: 15px;color: #287f18;">
+					<label class="control-label col-md-3 col-sm-3" style="text-align: right;">
+						Hãng sản xuất : 
+					</label>
+					<label id="vaccine" class="control-label col-md-6 col-sm-6">
+						Vaccine dự kiến tiêm : 
+					</label>			
+				</div>
+				<div class="item form-group" style="padding-bottom: 20px;font-size: 15px;color: #287f18;">
+					<label class="control-label col-md-3 col-sm-3" style="text-align: right;">
+						Lô sản xuất : 
+					</label>
+					<label id="vaccinelo" class="control-label col-md-6 col-sm-6">
+						Vaccine dự kiến tiêm : 
+					</label>			
+				</div>	
+				<div class="item form-group" style="padding-bottom: 20px;">
+					<label class="control-label col-md-3 col-sm-3" style="text-align: right;padding-top: 9px;">
+						Bác sĩ tiêm <span style="color:red">*</span>:
+					</label>
+					<div class="col-md-6 col-sm-6 ">
+						<input type="text" class="form-control" id="tenBacSi" name="tenBacSi">
+					</div>					
+				</div>
+				<input type="hidden" name = "dottiemId" id = "dottiemId" value="">
+				<input type="hidden" name = "bnId" id = "bnId" value="">	
+			</form>			
+		</div>
+        <div class="modal-footer">
+			<div class="col-xs-6 col-sm-6 col-md-6" style="text-align: left;">
+				<button type="button" class="btn btn-info save-kham-modal"><i class="fa fa-heart" style="padding-right: 5px;color:red"></i>  Tiêm chủng</button>
+			</div>
+			<div class="col-xs-6 col-sm-6 col-md-6" >
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<div>
+        </div>
+      </div>
+		</div>
+    </div>
+	</div>
+</div>
+<!-- End Modal add sp vao kho -->  	

@@ -1,0 +1,427 @@
+<?
+$listdoituong = $request->getAttribute("listdoituong");
+$listtotiem = $request->getAttribute("listtotiem");
+$listloaituoi = $request->getAttribute("listloaituoi");
+$listHangSX = $request->getAttribute("listHangSX");
+$dottiemUser = $request->getAttribute("dottiemUser");
+?>  	
+	<div class="x_panel">
+	  <div class="x_title table-title">
+		<h2>Duyệt danh sách tiêm vaccine</h2>						
+		<div class="clearfix"></div>
+	  </div>
+	  <!-- Form tim kiem -->
+	  <form class="form-horizontal form-label-left">
+		<div class="x_content">
+			<div>
+				<div class="panel panel-default tablemodify" style="padding:0 10px 10px 10px;margin-bottom: 0;">
+					<div class="x_title" style="margin-left: -10px;">
+						<h4 style="margin-left: 10px;margin-bottom: 0px;">Tìm kiếm bệnh nhân</h4>									
+						<div class="clearfix"></div>
+					</div>
+					<div class="row" >
+						<div class="form-group">										
+							<label class="control-label col-md-2">Tên/điện thoại/năm sinh/địa chỉ</label>
+							<div class="col-md-3">
+								<input type="text" class="form-control" name="searchName" id="searchName" >
+							</div>						
+							<div class="col-md-2">
+								<select id="selDuyet" class="select form-control">			
+									<option value="0">Chưa duyệt</option>
+									<option value="1">Đã duyệt</option>				
+								</select>
+							</div>
+							<div class="col-md-2">
+								<select id="selLanTien" class="select form-control">		
+									<option value="0">Chưa tiêm</option>
+									<option value="1">Đã tiêm mũi 1</option>
+									<option value="2" selected>Tất cả</option>
+								</select>
+							</div>
+							<div class="col-md-2" style="padding-top: 5px;">
+								<button type="button" class="btn btn-primary btn-sm" id="btnSearch">Tìm kiếm</button>
+							</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	  </form>		
+	<!-- Ket thuc Form tim kiem -->
+	  <div class="x_content">
+		<div style="display:none">
+			<select id="gioitinh" class="select form-control">			
+				<option value="Nam">Nam</option>
+				<option value="Nữ">Nữ</option>				
+			</select>
+			<select id="doituong" class="select form-control">
+				<option value="">--Chọn đối tượng--</option>
+<?			
+			if($listdoituong!=false){
+				foreach($listdoituong as $doituong){
+?>							
+				<option value="<?=$doituong->get("dtId")?>"><?=$doituong->get("tenDt")?></option>
+<?
+				}
+			}
+?>				
+			</select>
+			<select id="loaituoi" class="select form-control">
+				<option value="">--Chọn loại tuổi--</option>
+<?			
+			if($listloaituoi!=false){
+				foreach($listloaituoi as $loaituoi){
+?>							
+				<option value="<?=$loaituoi->get("ltId")?>"><?=$loaituoi->get("soTuoi")?></option>
+<?
+				}
+			}
+?>				
+			</select>
+		</div>
+		<form name="frmDuyet" id="frmDuyet" action="" method="post">
+			<input type="hidden" id="ngaytiemDuyet" name="ngaytiemDuyet" value="">
+			<input type="hidden" id="hangDuyet" name="hangDuyet" value="">
+			<input type="hidden" id="totiemId" name="totiemId" value="">
+			<input type="hidden" id="loDuyet" name="loDuyet" value="">
+			<input type="hidden" id="numberCheck" name="numberCheck" value="">
+			
+			<table id="datatable-nhapdanhsach" class="dataTable table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+			  <thead>
+				<tr>
+				  <th></th>
+				  <th><input type="checkbox" name="chkAll" id="chkAll" value="" style="margin-right: 10px;">STT</th>
+				  <th>Lần tiêm</th>
+				  <th>Mũi tiêm</th>
+				  <th>Họ và Tên </th>
+				  <th>Năm sinh</th>
+				  <th>Giới tính</th>
+				  <th>CMND/CCCD/ID <br> Code</th>		
+				  <th>Điện thoại</th>
+				  <th>Địa chỉ</th>	
+				  <th>Đối tượng</th>	
+				  <th>Loại tuổi</th>	
+				  <th>Func</th>                          
+				</tr>
+			  </thead>
+			  <tbody>			
+			  </tbody>
+			</table>	
+		</form>
+	  </div>
+	</div>  
+
+<!--  Modal -->
+<div class="modal fade" id="modal-duyet" role="dialog">
+    <div class="modal-dialog">    
+      <!-- Modal content-->
+      <div class="modal-content">        
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4 class="modal-title">Thời gian tiêm dự kiến </h4>
+        </div>
+        <div class="modal-body"> 
+			<form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left">					
+				<div class="item form-group">
+					<label class="control-label col-md-3 col-sm-3">Ngày tiêm <span class="required">*</span>
+					</label>
+					<div class="col-md-6 col-sm-6 ">
+						<!--<input id="ngaytiem" class="date-picker form-control" placeholder="dd/mm/yyyy" type="text" required="required" onfocus="this.type='date'" onmouseover="this.type='date'" onclick="this.type='date'">-->
+						<div class='input-group date' id='datetimepicker1'>
+							<input type='text' id="ngaytiem" class="typeDate form-control" placeholder="dd/mm/yyyy" />
+							<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+						</div>
+								
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="control-label col-md-3 col-sm-3 ">Hãng sản xuất <span class="required">*</span></label>
+					<div class="col-md-6 col-sm-6 ">					
+						<select id="selHang" class="form-control">
+							<option value="0">Chọn hãng sản xuất</option>
+<?			
+			if($listHangSX!=false){
+				foreach($listHangSX as $hangsx){
+?>							
+							<option value="<?=$hangsx->get("tenHang")?>"><?=$hangsx->get("tenHang")?></option>
+<?
+				}
+			}
+?>							
+						</select>
+					</div>
+				</div>
+				<div class="item form-group">
+					<label class="control-label col-md-3 col-sm-3">
+						Lô sản xuất 
+					</label>
+					<div class="col-md-6 col-sm-6 ">
+						<input type="text" id="loSX" class="form-control ">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label class="control-label col-md-3 col-sm-3 ">Tổ tiêm <span class="required">*</span></label>
+					<div class="col-md-6 col-sm-6 ">					
+<?
+			$style = "";
+			if($dottiemUser != 0) {	
+				$style = 'style="display: none;"';
+			}
+?>						
+						<select id="selToTiem" class="form-control" <?=$style?>>
+							<option value="0">-- Chọn tổ tiêm --</option>
+<?			
+			$to = "";
+			if($listtotiem!=false){
+				foreach($listtotiem as $totiem){
+					$select = "";
+					
+					if($dottiemUser == $totiem->get("toId")){
+						$select = "selected";
+						$to = $totiem->get("tenTo");
+					}
+?>							
+							<option value="<?=$totiem->get("toId")?>" <?=$select?>><?=$totiem->get("tenTo")?></option>
+<?
+				}
+			}
+?>							
+						</select>
+<?
+			if($dottiemUser != 0) {
+?>
+				<label class="control-label col-md-3 col-sm-3 " style="text-align: left;padding-left: 0px;"><?=$to?></label>
+<?				
+			}
+?>
+					</div>
+				</div>
+			</form>			
+		</div>
+        <div class="modal-footer">
+			<div class="col-xs-6 col-sm-6 col-md-6" style="text-align: left;">
+				<button type="button" class="btn btn-info save-duyet-modal"><i class="fa fa-floppy-o"></i>  Duyệt</button>
+			</div>
+			<div class="col-xs-6 col-sm-6 col-md-6" >
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<div>
+        </div>
+      </div>
+		</div>
+    </div>
+	</div>
+</div>
+<!-- End Modal add sp vao kho -->  	
+
+<!--Print--> 
+<div id="section-to-print" style="visibility:hidden;display:none"> 
+	<div id="printpage" class="print-page">
+		<div class="header">
+			<br>
+			<div class="header-left" style="margin-top:10px">
+				<img src="<?=_DEFAULT_URL_?>images/logo_bvtn1.png" width="280">
+			</div>
+			<div class="header-right">
+				<img src="https://chart.googleapis.com/chart?chs=150x150&cht=qr&chl=http%3A%2F%2Fwww.google.com%2F&choe=UTF-8"/>
+			</div>
+		</div>	    
+		<div class="title" style="margin-top: -50px;">
+			GIẤY CHỨNG NHẬN
+		</div>
+		<div class="title" style="padding-top: 0px;">
+			TIÊM CHỦNG VẮC XIN COVID-19
+			<hr>
+		</div>
+		<div class="title" style="padding-top: 0px;">
+			COVID-19 VACCINATION CERTIFICATE
+		</div>
+		<div style="margin-top:10px;">		
+			<label style="font-size: 13px;display: inline-block;width:170px">	Họ và tên/Full name: 
+			</label> 
+			<label style="font-size: 13px;">
+				<span id="pnguoilap"> Trần Viết Khôi</span>
+			</label>	
+		</div>
+		<div>		
+			<label style="font-size: 13px;display: inline-block;width:170px">	Ngày sinh /Date of birth: 
+			</label> 
+			<label style="font-size: 13px;">
+				<span id="pngaysinh"> 16/10/1978</span>
+			</label>	
+		</div>
+		<div>		
+			<label style="font-size: 13px;display: inline-block;width:170px">	Giới tính/Gender: 
+			</label> 
+			<label style="font-size: 13px;">
+				<span id="pgioitinh"> Nam</span>
+			</label>	
+		</div>
+		<div>		
+			<label style="font-size: 13px;display: inline-block;width:170px">	CMND/CCCD/ID Code: 
+			</label> 
+			<label style="font-size: 13px;">
+				<span id="pcmnd"> 045135000023</span>
+			</label>
+			<label style="padding-left: 25px;padding-right: 3px;font-size: 13px;display: inline-block;"> Passport: 			
+			</label> 
+			<label style="font-size: 13px;">
+				<span id="pPassport"> </span>
+			</label>	
+		</div>
+		<div>		
+			<label style="font-size: 13px;display: inline-block;width:170px">	Điện thoại/Phone Number: 
+			</label> 
+			<label style="font-size: 13px;">
+				<span id="pdienthoai"> 0909575391</span>
+			</label>	
+		</div>
+		<div>		
+			<div style="font-size: 13px;float: left;width:170px;">	Địa chỉ/Address: 
+			</div> 
+			<div style="font-size: 13px;float: left;width: 58%;">
+				<span id="pdiachi">30/9/8 Thống Nhất, Phường 10, Quận Gò Vấp, Thành phố Hồ Chí Minh</span>
+			</div>	
+		</div>				
+		<div class="footer-left" style="width:33%"> 
+			<div style="padding-bottom: 5px;">		
+				<label id="plantiem1" style="font-size: 16px;font-weight: bold;">	
+					Lần 1/<span class="font-italic">1<sup>st</sup></span>Dose
+				</label> 	
+			</div> 
+			<div>		
+				<label style="font-size: 12px;display: inline-block;/*width:100px*/"> Ngày/ Date: 
+				</label> 
+				<label style="font-size: 12px;">
+					<span id="pngaytiem1">05/05/2021</span>
+				</label>	
+			</div>
+			<div>		
+				<label style="font-size: 12px;display: inline-block;">
+					Vaccine: 
+				</label> 
+				<label style="font-size: 12px;display: contents;">
+					<span id="ploaivaccine1">COVID-19 Vaccine</span>
+				</label>	
+			</div>
+			<div>		
+				<label style="font-size: 12px;"> 
+					Hãng SX/Manufacturer: 
+				</label> 
+				<div style="text-align:center">
+					<label style="font-size: 12px;text-align:center">
+						<span id="phang1">ASTRAZENECA</span>
+					</label>	
+				</div>
+			</div>
+			<div>		
+				<label style="font-size: 12px;display: inline-block;/*width:100px*/"> Lô sx/Lot: 
+				</label> 
+				<label style="font-size: 12px;">
+					<span id="plo1">ABX1466</span>
+				</label>	
+			</div>
+		</div>		
+		<div class="footer-left" style="width:33%"> 
+			<div style="padding-bottom: 5px;">		
+				<label id="plantiem2" style="font-size: 16px;font-weight: bold;">	
+					Lần 2/<span class="font-italic">2<sup>nd</sup></span>Dose
+				</label> 	
+			</div> 
+			<div>		
+				<label style="font-size: 12px;display: inline-block;/*width:100px*/"> Ngày/ Date: 
+				</label> 
+				<label style="font-size: 12px;">
+					<span id="pngaytiem2">04/06/2021</span>
+				</label>	
+			</div>
+			<div>		
+				<label style="font-size: 12px;display: inline-block;">
+					Vaccine: 
+				</label> 
+				<label style="font-size: 12px;display: contents;">
+					<span id="ploaivaccine2">COVID-19 Vaccine</span>
+				</label>	
+			</div>
+			<div>		
+				<label style="font-size: 12px;"> 
+					Hãng SX/Manufacturer: 
+				</label> 
+				<div style="text-align:center">
+					<label style="font-size: 12px;text-align:center">
+						<span id="phang2">ASTRAZENECA</span>
+					</label>	
+				</div>
+			</div>
+			<div>		
+				<label style="font-size: 12px;display: inline-block;/*width:100px*/"> Lô sx/Lot: 
+				</label> 
+				<label style="font-size: 12px;">
+					<span id="plo2">ABX1466</span>
+				</label>	
+			</div>
+		</div>
+		<div class="footer-left" style="width:33%"> 
+			<div style="padding-bottom: 5px;">		
+				<label id="plantiem3" style="font-size: 16px;font-weight: bold;">	
+					Lần 3/<span class="font-italic">3<sup>nd</sup></span>Dose
+				</label> 	
+			</div> 
+			<div>		
+				<label style="font-size: 12px;display: inline-block;/*width:100px*/"> Ngày/ Date: 
+				</label> 
+				<label style="font-size: 12px;">
+					<span id="pngaytiem3">04/12/2021</span>
+				</label>	
+			</div>
+			<div>		
+				<label style="font-size: 12px;display: inline-block;">
+					Vaccine: 
+				</label> 
+				<label style="font-size: 12px;display: contents;">
+					<span id="ploaivaccine3">COVID-19 Vaccine</span>
+				</label>	
+			</div>
+			<div>		
+				<label style="font-size: 12px;"> 
+					Hãng SX/Manufacturer: 
+				</label> 
+				<div style="text-align:center">
+					<label style="font-size: 12px;text-align:center">
+						<span id="phang3">ASTRAZENECA</span>
+					</label>	
+				</div>
+			</div>
+			<div>		
+				<label style="font-size: 12px;display: inline-block;/*width:100px*/"> Lô sx/Lot: 
+				</label> 
+				<label style="font-size: 12px;">
+					<span id="plo3">ABX1466</span>
+				</label>	
+			</div>
+		</div>
+		<div class="pfooter">
+			<div class="row" style="width: 148mm;">
+				<div class="col-sm-7" style="padding: 0px;">
+					<ul>
+						<li class="text-primary" style="font-size: 15px;font-weight: bold;">Bệnh viện Thống Nhất</li>
+						<li class="font-weight-bolder"><i class="fa fa-map-marker text-primary mr-2 font-size-1"></i>Số 1 Lý Thường Kiệt, P7, Q.Tân Bình, TP.HCM</li>
+						<li class="font-weight-bolder"><i class="fa fa-phone text-primary mr-2 font-size-1"></i>(028)38642 142</li>
+						<li class="font-weight-bolder"><i class="fa fa-globe text-primary mr-2 font-size-1"></i>www.bvtn.org.vn</li>
+						<li class="font-weight-bolder"><i class="fa fa-envelope text-primary mr-2 font-size-1"></i>thongnhathospital@bvtn.org.vn</li>
+					</ul>
+				</div>
+				<div class="col-sm-5 text-center" style="padding: 0px;margin-bottom:4rem;position: relative;">
+					<div style="font-size:16px">
+						<div style="padding-bottom: 20px;padding-right: 50px;">GIÁM ĐỐC</div>
+						<div><img src="<?=_DEFAULT_URL_?>images/chuky.png" width="200" style=" position:absolute;top: 15px;left: -3px;"></div>
+					</div>
+					<div style="font-size:16px;margin-top:6rem;margin-right:3rem">
+						<div class="font-weight-bolder">PGS.TS.BS. Lê Đình Thanh</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</div>
+<!--End print don hang-->

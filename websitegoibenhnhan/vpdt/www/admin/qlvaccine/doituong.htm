@@ -1,0 +1,49 @@
+	<div class="x_panel">
+	  <div class="x_title table-title">
+		<h2>Danh sách đối tượng</h2>						
+		<div class="clearfix"></div>
+	  </div>
+	  <!-- Form tim kiem -->
+	  <form class="form-horizontal form-label-left">
+		<div class="x_content">
+			<div>
+				<div class="panel panel-default tablemodify" style="padding:0 10px 10px 10px;margin-bottom: 0;">
+					<div class="x_title" style="margin-left: -10px;">
+						<h4 style="margin-left: 10px;margin-bottom: 0px;">Tìm kiếm </h4>									
+						<div class="clearfix"></div>
+					</div>
+					<div class="row" >
+						<div class="form-group">										
+							<label class="control-label col-md-2 col-xs-12">Tên/địa chỉ</label>
+							<div class="col-md-3 col-xs-12">
+								<input type="text" class="form-control" name="searchName" id="searchName" >
+							</div>							
+							<div class="col-md-3 col-xs-12" style="padding-top: 5px;">
+								<button type="button" class="btn btn-primary btn-sm" id="btnSearch">Tìm kiếm</button>&nbsp;
+							</div>
+						</div>
+					</div>					
+				</div>
+			</div>
+		</div>
+	  </form>		
+	<!-- Ket thuc Form tim kiem -->
+	  <div class="x_content">
+		<table id="datatable-doituong" class="dataTable table table-striped table-bordered" cellspacing="0" width="100%">
+		  <thead>
+			<tr>
+			  <th>STT</th>
+			  <th data-type="String" validate-type="true">Mã đối tượng <span style="color:red">*</span></th>
+			  <th data-type="String" validate-type="true">Tên đối tượng <span style="color:red">*</span></th>
+			  <th data-type="String">Địa chỉ</th>
+			  <th data-type="String">Người liên hệ </th>		
+			  <th data-type="String">Điện thoại </th>
+			  <th data-type="String">Email </th>
+			  <th>Func</th>                          
+			</tr>
+		  </thead>
+		  <tbody>			
+		  </tbody>
+		</table>					
+	  </div>
+	</div>

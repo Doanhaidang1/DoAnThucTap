@@ -1,0 +1,283 @@
+<?
+$listdoituong = $request->getAttribute("listdoituong");
+$listtotiem = $request->getAttribute("listtotiem");
+$listHangSX = $request->getAttribute("listHangSX");
+
+$stungaytiem = $request->getAttribute("stungaytiem");
+$sdenngaytiem = $request->getAttribute("sdenngaytiem");		
+$dottiemUser = $request->getAttribute("dottiemUser");
+
+$stotiem = $request->getAttribute("stotiem");
+$shangtiem = $request->getAttribute("shangtiem");
+$sdoituong = $request->getAttribute("sdoituong");
+
+$listlantiem = $request->getAttribute("listlantiem");
+//print_r($listlantiem);
+?>  	
+	<div class="x_panel">
+	  <div class="x_title table-title">
+		<h2>Báo cáo tình hình tiêm vaccine</h2>						
+		<div class="clearfix"></div>
+	  </div>
+	  <!-- Form tim kiem -->
+	  <form class="form-horizontal form-label-left">
+		<div class="x_content">
+			<div>
+				<div class="panel panel-default tablemodify" style="padding:0 10px 10px 10px;margin-bottom: 0;">
+					<div class="x_title" style="margin-left: -10px;">
+						<h4 style="margin-left: 10px;margin-bottom: 0px;">Tìm kiếm </h4>									
+						<div class="clearfix"></div>
+					</div>
+					<form name="frmTimBaocao" id="frmTimBaocao" action="<?=_DEFAULT_URL_/baocaotiem?>" method="post">
+					<div class="row" >
+						<div class="item form-group">										
+							<label class="control-label col-md-2">Tổ tiêm</label>
+							<div class="col-md-2">
+								<select id="stotiem" name="stotiem" class="select form-control">
+									<option value="">-- Tất cả --</option>
+					<?			
+								if($listtotiem!=false){
+									foreach($listtotiem as $totien){
+										$select = "";
+										if($stotiem == $totien->get("toId")){
+											$select = "selected";
+										}
+					?>							
+									<option value="<?=$totien->get("toId")?>" <?=$select?>><?=$totien->get("tenTo")?></option>
+					<?
+									}
+								}
+					?>				
+								</select>
+							</div>
+							<label class="control-label col-md-2">Vaccine</label>
+							<div class="col-md-2">
+								<select id="shangtiem" name="shangtiem" class="select form-control">
+									<option value="">-- Tất cả --</option>
+					<?			
+								if($listHangSX!=false){
+									foreach($listHangSX as $hang){
+										$select = "";
+										if($shangtiem == $hang->get("tenHang")){
+											$select = "selected";
+										}
+					?>							
+									<option value="<?=$hang->get("tenHang")?>" <?=$select?>><?=$hang->get("tenHang")?></option>
+					<?
+									}
+								}
+					?>				
+								</select>
+							</div>
+							<label class="control-label col-md-2">Đối tượng</label>
+							<div class="col-md-2">
+								<select id="sdoituong" name="sdoituong" class="select form-control">
+									<option value="">-- Tất cả --</option>
+					<?			
+								if($listdoituong!=false){
+									foreach($listdoituong as $doituong){
+										$select = "";
+										if($sdoituong == $doituong->get("dtId")){
+											$select = "selected";
+										}
+					?>							
+									<option value="<?=$doituong->get("dtId")?>" <?=$select?>><?=$doituong->get("tenDt")?></option>
+					<?
+									}
+								}
+					?>				
+								</select>
+							</div>
+						</div>	
+					</div>	
+					<div class="row" >
+						<div class="item form-group">
+							<label class="control-label col-md-2 col-sm-2">Từ Ngày</label>
+							<div class="col-md-2 col-sm-2 ">
+								<!--<input id="stungaytiem" name="stungaytiem" class="date-picker form-control" placeholder="dd/mm/yyyy" type="date" onfocus="this.type='date'" onmouseover="this.type='date'" onclick="this.type='date'" value="<?=$stungaytiem?>">-->
+								<div class='input-group date' id='datetimepicker1'>
+									<input type='text' id="stungaytiem" name="stungaytiem" class="typeDate form-control" placeholder="dd/mm/yyyy" value="<?=$stungaytiem?>"/>
+									<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+								</div>
+							</div>
+							<label class="control-label col-md-2 col-sm-2">Đến Ngày</label>
+							<div class="col-md-2 col-sm-2 ">
+								<!--<input id="sdenngaytiem" name="sdenngaytiem" class="date-picker form-control" placeholder="dd/mm/yyyy" type="date" onfocus="this.type='date'" onmouseover="this.type='date'" onclick="this.type='date'" value="<?=$sdenngaytiem?>">-->
+								<div class='input-group date' id='datetimepicker2'>
+									<input type='text' id="sdenngaytiem" name="sdenngaytiem" class="typeDate form-control" placeholder="dd/mm/yyyy" value="<?=$sdenngaytiem?>"/>
+									<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+								</div>
+							</div>
+						</div>
+					</div>		
+					<div class="row" >						
+						<div class="item form-group">
+							<label class="control-label col-md-2 col-sm-2">
+								<input type="hidden" id="totiem" name="totiem" value="">
+							</label>
+							<div class="col-md-2" style="padding-top: 5px;">
+								<button type="submit" class="btn btn-primary btn-sm" id="btnSearch">Tìm kiếm</button>
+							</div>
+						</div>
+					</div>	
+					</form>
+				</div>
+			</div>
+		</div>
+	  </form>		
+	<!-- Ket thuc Form tim kiem -->
+	  <div class="x_content">
+				</table> <table class="table table-bordered">
+				<thead style="background-color: #c4c8cb;color: black;">
+				  <tr>
+					<th rowspan="2" width="10%">Tổ tiêm</th>
+<?			
+		$c = 0;
+		if($listHangSX!=false){
+			foreach($listHangSX as $hang){
+				if($shangtiem == "" || $shangtiem == $hang->get("tenHang")){
+					$c++;
+					$tong[$hang->get("tenHang")][0] = 0;
+					$tong[$hang->get("tenHang")][1] = 0;
+?>			
+					<th colspan="2"  width="10%"><?=$hang->get("tenHang")?></th>
+<?
+				}
+			}
+		}
+		if($c > 1) {
+?>
+					<th rowspan="2" width="10%">Tổng duyệt</th>
+					<th rowspan="2" width="10%">Tổng tiêm</th>
+<?
+		}					
+?>
+					<th rowspan="2" width="10%"></th>
+				  </tr>
+				  <tr>
+<?			
+		for($i=0;$i<$c;$i++) {
+			
+?>				
+					<th width="5%">Được duyệt</th>
+					<th width="5%">Đã tiêm</th>
+<?
+		}
+?>
+				  </tr>
+				</thead>
+				<tbody>
+<?			
+		$t = 0;
+		$tongcongduyet = 0;
+		$tongcongtiem = 0;
+		if($listtotiem!=false){
+			foreach($listtotiem as $totien){
+				if($stotiem == "" || $stotiem ==$totien->get("toId")){
+					$t++;
+?>
+				  <tr>
+					<td><?=$totien->get("tenTo")?></td>
+<?			
+					$tongduyet = 0;
+					$tongtiem = 0;
+					if($listHangSX!=false){
+						foreach($listHangSX as $hang){
+							if($shangtiem == "" || $shangtiem == $hang->get("tenHang")){
+								$tongduyet += $listlantiem[$totien->get("toId")][$hang->get("tenHang")][0];
+								$tongtiem += $listlantiem[$totien->get("toId")][$hang->get("tenHang")][1];
+								
+								$tong[$hang->get("tenHang")][0]+=$listlantiem[$totien->get("toId")][$hang->get("tenHang")][0];
+								$tong[$hang->get("tenHang")][1]+=$listlantiem[$totien->get("toId")][$hang->get("tenHang")][1];
+?>			
+					<td><?=$listlantiem[$totien->get("toId")][$hang->get("tenHang")][0]?></td>
+					<td><?=$listlantiem[$totien->get("toId")][$hang->get("tenHang")][1]?></td>
+<?
+							}
+						}
+					}
+					if($c > 1) {		
+?>
+					<td style="font-weight: bold;"><?=$tongduyet?></td>
+					<td style="font-weight: bold;"><?=$tongtiem?></td>
+<?
+					}
+?>
+					<td style="font-weight: bold;"><a onclick="return xemchitiet(<?=$totien->get("toId")?>);">Xem chi tiết</a></td>
+				  </tr>
+<?
+					$tongcongduyet+=$tongduyet;
+					$tongcongtiem+=$tongtiem;
+				}
+			}
+		}
+		if($t > 1) {
+?>
+				<tr>
+					<td style="font-weight: bold;">Tổng cộng</td>
+<?			
+			if($listHangSX!=false){
+				foreach($listHangSX as $hang){
+					if($shangtiem == "" || $shangtiem == $hang->get("tenHang")){
+?>			
+					<td style="font-weight: bold;"><?=$tong[$hang->get("tenHang")][0]?></td>
+					<td style="font-weight: bold;"><?=$tong[$hang->get("tenHang")][1]?></td>
+<?
+					}
+				}
+			}
+			if($c > 1) {
+?>
+					<td style="font-weight: bold;"><?=$tongcongduyet?></td>
+					<td style="font-weight: bold;"><?=$tongcongtiem?></td>
+<?
+			}
+?>				
+				</tr>
+<?
+		}
+?>
+				</tbody>
+			  </table>
+	  </div>
+	</div> 
+
+<!--  Modal -->
+<div class="modal fade" id="modal-xemchitiet" role="dialog">
+    <div class="modal-dialog modal-lg">    
+      <!-- Modal content-->
+      <div class="modal-content">        
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+			<h4 class="modal-title">Danh sách chi tiết tiêm </h4>
+        </div>
+        <div class="modal-body"> 
+			<table id="datatable-xemchitiet" class="dataTable table table-striped table-bordered dt-responsive" cellspacing="0" width="100%">
+			  <thead>
+				<tr>
+				  <th>STT</th>
+				  <th>Họ và Tên </th>
+				  <th>Năm sinh</th>
+				  <th>Giới tính</th>
+				  <th>CMND/CCCD</th>		
+				  <th>Điện thoại</th>
+				  <th>Địa chỉ</th>	
+				  <th>Đối tượng</th>	
+				  <th>Loại tuổi</th>	
+				  <th>Ngày tiêm</th>
+				  <th>Vaccine</th>
+				  <th>Bác sĩ khám</th>    
+				  <th>Bác sĩ Tiêm</th>   	
+				</tr>
+			  </thead>
+			  <tbody>			
+			  </tbody>
+			</table>		
+		</div>
+        <div class="modal-footer"></div>
+      </div>
+		</div>
+    </div>
+	</div>
+</div>
+<!-- End Modal -->  	
